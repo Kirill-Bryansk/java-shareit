@@ -18,12 +18,13 @@ public class Item {
     private String description;
 
     // Статус о том, доступна или нет вещь для аренды
-    private boolean available;
+    private boolean availableForRent;
 
     // Владелец вещи
     private User owner;
 
-    // Если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
+    // Если вещь была создана по запросу другого пользователя,
+    // то в этом поле будет храниться ссылка на соответствующий запрос
     private Request request;
 }
 
