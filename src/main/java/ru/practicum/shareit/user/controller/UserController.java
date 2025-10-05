@@ -26,8 +26,7 @@ public class UserController {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        User user = UserMapper.fromDto(userDto);
-        User createdUser = userService.createUser(user);
+        User createdUser = userService.createUser(userDto);
         return ResponseEntity.ok(createdUser);
     }
 
@@ -37,13 +36,13 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
         userDto.setId(id);
-        User user = UserMapper.fromDto(userDto);
-        User updatedUser = userService.updateUser(user);
+        User updatedUser = userService.updateUser(userDto);
         if (updatedUser != null) {
             return ResponseEntity.ok(updatedUser);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
 }
 
