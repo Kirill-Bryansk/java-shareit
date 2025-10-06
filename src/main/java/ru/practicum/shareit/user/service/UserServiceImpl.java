@@ -16,11 +16,11 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    public User createUser(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
         User user = userMapper.fromDto(userDto);
         User savedUser = userRepository.save(user);
         log.info("Пользователь успешно создан: {}", savedUser.getId());
-        return savedUser;
+        return userMapper.toDto(savedUser);
     }
 
     @Override

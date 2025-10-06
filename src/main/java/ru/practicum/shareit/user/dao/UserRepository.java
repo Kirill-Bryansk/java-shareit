@@ -24,8 +24,10 @@ public class UserRepository {
             if (existingUser.isPresent()) {
                 int index = users.indexOf(existingUser.get());
                 users.set(index, user); // Обновляет существующего пользователя
+                System.out.println(users + "ОБНОВЛЕН");
             } else {
                 users.add(user); // Добавление нового пользователя
+                System.out.println(users+ "СОЗДАН");
             }
             return user;
         } catch (Exception e) {

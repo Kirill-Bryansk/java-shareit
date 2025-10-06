@@ -5,7 +5,7 @@ import ru.practicum.shareit.user.model.User;
 
 public interface UserService {
     // Метод для создания нового пользователя
-    User createUser(UserDto userDto);
+    UserDto createUser(UserDto userDto);
 
     // Метод для получения пользователя по идентификатору
     User getUserById(Long id);

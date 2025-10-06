@@ -19,15 +19,15 @@ public class UserMapper {
             log.warn("Произошла попытка преобразования пустого объекта User");
             return null;
         }
-        UserDto userDto = new UserDto(); // Создаем новый объект UserDto
-        try {
-            BeanUtils.copyProperties(user, userDto); // Копируем свойства из объекта user в userDto
-            log.info("Объект User успешно преобразован в UserDto");
-        } catch (Exception e) {
-            log.error("Ошибка преобразования объекта User в UserDto", e);
-        }
+        UserDto userDto = UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
+        log.info("Объект User успешно преобразован в UserDto");
         return userDto;
     }
+
 
     // Метод преобразует объект UserDto в объект User.
     public User fromDto(UserDto userDto) {
