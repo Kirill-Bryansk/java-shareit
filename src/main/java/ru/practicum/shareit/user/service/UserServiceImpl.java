@@ -29,11 +29,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(UserDto userDto) {
+    public UserDto updateUser(UserDto userDto) {
         User user = userMapper.fromDto(userDto);
         User updateUser = userRepository.updateUser(user);
         log.info("Пользователь успешно обновлен: {}", updateUser.getId());
-        return updateUser;
+        return userMapper.toDto(updateUser);
     }
 
     @Override

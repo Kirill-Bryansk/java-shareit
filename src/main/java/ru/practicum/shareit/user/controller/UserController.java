@@ -33,32 +33,17 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
-        try {
+    public ResponseEntity<UserDto>
+    createUser(@Valid @RequestBody UserDto userDto) {
             UserDto createdUser = userService.createUser(userDto);
             return ResponseEntity.ok(createdUser);
-        } catch (HttpMessageNotReadableException e) {
-            log.error("Ошибка при чтении тела запроса: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
     }
-
-
-
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto, BindingResult result) {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
-        userDto.setId(id);
-        User updatedUser = userService.updateUser(userDto);
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
+            userDto.setId(id);
+            UserDto updateUserDto = userService.updateUser(userDto);
+            return ResponseEntity.ok(updateUserDto);
     }
-
 }
 

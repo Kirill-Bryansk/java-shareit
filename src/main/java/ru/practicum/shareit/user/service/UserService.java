@@ -11,7 +11,7 @@ public interface UserService {
     User getUserById(Long id);
 
     // Метод для обновления пользователя
-    User updateUser(UserDto userDto);
+    UserDto updateUser(UserDto userDto);
 
     // Метод для удаления пользователя по идентификатору
     void deleteUser(Long id);

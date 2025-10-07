@@ -2,36 +2,36 @@ package ru.practicum.shareit.user.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class UserRepository {
-    private final List<User> users = new ArrayList<>();
+    private final Map<Long, User> users = new HashMap<>();
+    private final Set<String> userEmails = new HashSet<>();
     private final Logger log = LoggerFactory.getLogger(UserRepository.class);
     private final AtomicLong nextId = new AtomicLong(1L);
 
     public User save(User user) {
-        if (users.stream()
-                .anyMatch(u -> Objects.equals(u.getId(), user.getId()))) {
+        if (users.containsKey(user.getId())) {
             throw new IllegalArgumentException("Пользователь с id {" + user.getId()+ "} уже существует." );
-        } else if ( users.stream()
-                .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
+        } else if (userEmails.contains(user.getEmail())) {
             throw new IllegalArgumentException("Пользователь с таким email уже существует: " + user.getEmail());
         }
         try {
             if (user.getId() == null) { // Если ID не задан, присваиваем новый
                 user.setId(nextId.getAndIncrement());
+                if (users.containsKey(user.getId())) {
+                    throw new IllegalArgumentException("Пользователь с id {" + user.getId() + "} уже существует.");
+                }
             }
-            users.add(user); // Добавление нового пользователя
+            users.put(user.getId(), user); // Добавление нового пользователя
+            userEmails.add(user.getEmail());
             System.out.println(users + "СОЗДАН");
+            System.out.println(userEmails + "------");
             return user;
         } catch (Exception e) {
             // Общий блок для обработки других исключений
@@ -46,43 +46,58 @@ public class UserRepository {
 
 
     public List<User> getAll() {
-        return users;
+        return new ArrayList<>(users.values());
     }
 
-    public Optional<User> getUserById(Long id) {
-        for (User user : users) {
-            if (user.getId().equals(id)) {
-                return Optional.of(user);
-            }
+    public User getUserById(Long id) {
+        User existingUser = users.get(id);
+        if (existingUser == null) {
+            throw new IllegalArgumentException("Пользователь с id {" + user.getId() + "} не найден.");
         }
-        return Optional.empty();
+        return users.getOrDefault(id, null);
     }
+    // хотел оптимизировать обновление. Пролема в выводимом сообщении. Получается исключение одно из трех а
+    //вывод пользователь по id не найден. Надо развести эти ошибки, не знаю что лучше и правильнее NotFound а не
+    // IllegalArgumentException. Но в поиск пользователя передается только id а я хочу что бы в сообщении выводился id
+    // того кого не нашли
 
     public User updateUser(User user) {
         try {
-            Optional<User> existingUser = getUserById(user.getId());
-            if (existingUser.isPresent()) {
-                int index = users.indexOf(existingUser.get());
-                users.set(index, user);
+            User existingUser = getUserById(user.getId());
+            if (!(existingUser.equals(user)) && !(userEmails.contains(user.getEmail()))) {
+                User updateUser = new User();
+                updateUser.setId(user.getId());
+                System.out.println("Id обновляемого " + user.getId());
+                System.out.println(user.getEmail() + "333333333");
+                System.out.println(user.getEmail());
+                updateUser.setEmail(user.getEmail());
+                System.out.println("//////////" + userEmails);
+                updateUser.setName(user.getName());
+                userEmails.remove(updateUser.getEmail());
+                System.out.println(user + "ОБНОВЛЕН");
+                users.replace(user.getId(), updateUser);
+                System.out.println(userEmails + "------");
                 return user;
             } else {
-                throw new IllegalArgumentException("Пользователь с указанным ID не найден");
+                throw new IllegalArgumentException("Пользователь с id {" + user.getId() + "} не найден.");
             }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Произошла ошибка при обновлении пользователя: " + e.getMessage());
-            return null;
+        } catch (Exception e) {
+            // Общий блок для обработки других исключений
+            log.error("Произошла ошибка при обновлении пользователя: {}", e.getMessage());
+            throw e; // Перебрасываем исключение, чтобы оно могло быть обработано выше по стеку вызовов
         }
     }
 
 
     public boolean deleteUser(Long id) {
-        Optional<User> userToDelete = getUserById(id);
+       /* User userToDelete = getUserById(id);
         if (userToDelete.isPresent()) {
             users.remove(userToDelete.get());
             return true;
         } else {
             return false;
-        }
+        }*/
+        return false;
     }
 }
 
