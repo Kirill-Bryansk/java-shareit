@@ -8,33 +8,40 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class UserRepository {
     private final List<User> users = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(UserRepository.class);
+    private final AtomicLong nextId = new AtomicLong(1L);
 
     public User save(User user) {
+        if (users.stream()
+                .anyMatch(u -> Objects.equals(u.getId(), user.getId()))) {
+            throw new IllegalArgumentException("Пользователь с id {" + user.getId()+ "} уже существует." );
+        } else if ( users.stream()
+                .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
+            throw new IllegalArgumentException("Пользователь с таким email уже существует: " + user.getEmail());
+        }
         try {
-            Optional<User> existingUser = users.stream()
-                    .filter(u -> u.getId().equals(user.getId()))
-                    .findFirst();
-
-            if (existingUser.isPresent()) {
-                int index = users.indexOf(existingUser.get());
-                users.set(index, user); // Обновляет существующего пользователя
-                System.out.println(users + "ОБНОВЛЕН");
-            } else {
-                users.add(user); // Добавление нового пользователя
-                System.out.println(users+ "СОЗДАН");
+            if (user.getId() == null) { // Если ID не задан, присваиваем новый
+                user.setId(nextId.getAndIncrement());
             }
+            users.add(user); // Добавление нового пользователя
+            System.out.println(users + "СОЗДАН");
             return user;
         } catch (Exception e) {
+            // Общий блок для обработки других исключений
             log.error("Произошла ошибка при сохранении пользователя: {}", e.getMessage());
-            return null;
+            throw e; // Перебрасываем исключение, чтобы оно могло быть обработано выше по стеку вызовов
         }
     }
+
+
+
 
 
 
