@@ -14,12 +14,12 @@ public class UserDto {
     @NotNull(message = "ID не может быть пустым")
     private Long id;
 
-    @NotEmpty(message = "Имя не может быть пустым")
+    @NotEmpty(message = "{user.name.required}")
     @Size(max = 50, min = 0, message = "Имя должно содержать не более 50 символов")
     private String name;
 
     @Email(message = "Формат email некорректен")
-    @NotEmpty(message = "Email не может быть пустым")
+    @NotEmpty(message = "{user.email.invalid}")
     private String email;
 }
 

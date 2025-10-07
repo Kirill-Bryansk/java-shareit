@@ -27,23 +27,10 @@ public class UserController {
     @Autowired
     private final UserService userService;
 
-
-
-
-    @PostMapping
+    @PostMapping("/users")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto, BindingResult result) {
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().build();
-        }
-        Set<ConstraintViolation<UserDto>> violations = validator.validate(userDto);
-        if (!violations.isEmpty()) {
-            for (ConstraintViolation<UserDto> violation : violations) {
-                System.out.println("Нарушение: " + violation.getMessage());
-                return ResponseEntity.badRequest().build();
-            }
-        } else {
-            System.out.println("Объект соответствует всем требованиям.");
         }
         UserDto createdUser = userService.createUser(userDto);
         return ResponseEntity.ok(createdUser);
