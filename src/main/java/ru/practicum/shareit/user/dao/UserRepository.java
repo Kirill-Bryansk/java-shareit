@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class UserRepository {
     private final Map<Long, User> users = new HashMap<>();
     private final Set<String> userEmails = new HashSet<>();
-    private final Logger log = LoggerFactory.getLogger(UserRepository.class);
     private final AtomicLong nextId = new AtomicLong(1L);
 
     public User save(User user) {
