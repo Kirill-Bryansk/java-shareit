@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.dao;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
+@RequiredArgsConstructor
 public class UserRepository {
     private final Map<Long, User> users = new HashMap<>();
     private final Set<String> userEmails = new HashSet<>();
@@ -48,35 +50,26 @@ public class UserRepository {
         return existingUser;
     }
 
-    private void checkEmailUniqueness(String email) {
-        if (userEmails.contains(email)) {
-            throw new IllegalArgumentException("Пользователь с таким email уже существует: " + email);
-        }
-    }
-
-
-    public void deleteUser(Long id) {
-        users.remove(id);
-       /* User userToDelete = getUserById(id);
-        if (userToDelete.isPresent()) {
-            users.remove(userToDelete.get());
-            return true;
-        } else {
-            return false;
-        }*/
-        //return false;
-    }
-
-    public List<User> getAll() {
-        return new ArrayList<>(users.values());
-    }
-
     public User getUserById(Long id) {
         User existingUser = users.get(id);
         if (existingUser == null) {
             throw new NotFoundException("Пользователь с id {" + id + "} не найден.");
         }
         return existingUser;
+    }
+
+    public void deleteUser(Long id) {
+        users.remove(id);
+    }
+
+    private void checkEmailUniqueness(String email) {
+        if (userEmails.contains(email)) {
+            throw new IllegalArgumentException("Пользователь с таким email уже существует: " + email);
+        }
+    }
+
+    public List<User> getAll() {
+        return new ArrayList<>(users.values());
     }
 }
 

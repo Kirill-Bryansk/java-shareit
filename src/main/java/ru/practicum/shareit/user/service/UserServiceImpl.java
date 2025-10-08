@@ -25,20 +25,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long id) {
-        return userMapper.toDto(userRepository.getUserById(id));
+        UserDto getUser = userMapper.toDto(userRepository.getUserById(id));
+        log.info("Пользователь: {} успешно получен.", getUser.toString());
+        return getUser;
     }
 
     @Override
     public UserDto updateUser(UserDto userDto) {
         User user = userMapper.fromDto(userDto);
         User updateUser = userRepository.updateUser(user);
-        log.info("Пользователь успешно обновлен: {}", updateUser.getId());
+        log.info("Пользователь успешно обновлен: {}", updateUser.toString());
         return userMapper.toDto(updateUser);
     }
 
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteUser(id);
-
+        log.info("Пользователь id: {} успешно удален: ", id);
     }
 }

@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.model.User;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 
 @Component
 public class UserMapper {
@@ -27,7 +26,6 @@ public class UserMapper {
         log.info("Объект User успешно преобразован в UserDto");
         return userDto;
     }
-
 
     // Метод преобразует объект UserDto в объект User.
     public User fromDto(UserDto userDto) {
