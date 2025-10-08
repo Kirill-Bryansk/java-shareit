@@ -9,8 +9,10 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
 import ru.practicum.shareit.user.controller.UserController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,17 +33,25 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
-        String errormessage = "Ошибка при выполнении запроса сервером. " + ex.getMessage();
+    public ResponseEntity<List<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        List<String> errorResponse = new ArrayList<>();
+        errorResponse.add("Ошибка при выполнении запроса сервером: " + ex.getMessage());
 
-        log.error(errormessage);
-        return new ResponseEntity<>(errormessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        log.error(errorResponse.get(0));
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
+
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         String errorMessage = "Ошибка при чтении тела запроса: " + ex.getMessage();
         log.error(errorMessage);
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpClientErrorException.NotFound.class)
+    public ResponseEntity<?> handlerHttpClientErrorException(HttpClientErrorException.NotFound ex) {
+        String errorMessage = "Ошибка поступивших на сервер данных: " + ex.getMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 }

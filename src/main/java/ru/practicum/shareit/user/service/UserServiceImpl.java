@@ -24,8 +24,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Long id) {
-        return null;
+    public UserDto getUserById(Long id) {
+        return userMapper.toDto(userRepository.getUserById(id));
     }
 
     @Override
@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
+        userRepository.deleteUser(id);
 
     }
 }

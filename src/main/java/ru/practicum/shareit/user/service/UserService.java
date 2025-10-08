@@ -8,7 +8,7 @@ public interface UserService {
     UserDto createUser(UserDto userDto);
 
     // Метод для получения пользователя по идентификатору
-    User getUserById(Long id);
+    UserDto getUserById(Long id);
 
     // Метод для обновления пользователя
     UserDto updateUser(UserDto userDto);

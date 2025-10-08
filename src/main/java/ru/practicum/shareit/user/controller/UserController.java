@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
@@ -18,12 +19,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
-
+import ru.practicum.shareit.user.validation.Creation;
 
 
 @RestController
 @RequestMapping(path = "/users")
-public class UserController {
+public class  UserController {
 
     private final UserService userService;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -33,17 +34,27 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto>
-    createUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@Validated(Creation.class) @RequestBody UserDto userDto) {
             UserDto createdUser = userService.createUser(userDto);
             return ResponseEntity.ok(createdUser);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
             userDto.setId(id);
             UserDto updateUserDto = userService.updateUser(userDto);
             return ResponseEntity.ok(updateUserDto);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+        UserDto getUserDto = userService.getUserById(id);
+        return ResponseEntity.ok(getUserDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
 }
 
