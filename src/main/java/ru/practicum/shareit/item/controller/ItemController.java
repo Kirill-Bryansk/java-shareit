@@ -51,7 +51,8 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ItemDto>> searchItems(@RequestHeader Long userId, @RequestParam String query) {
+    public ResponseEntity<List<ItemDto>> searchItems(@RequestHeader(USER_HEADER) Long userId,
+                                                     @RequestParam String query) {
         log.info("GET: запрос на поиск предмета");
         return ResponseEntity.ok(itemService.searchItems(userId, query));
     }

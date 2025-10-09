@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
@@ -11,6 +13,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemDto {
     @NotNull(message = "ID не может быть пустым")
     private Long id;
