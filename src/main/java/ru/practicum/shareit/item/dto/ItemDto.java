@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Data;
-import ru.practicum.shareit.request.model.Request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +27,6 @@ public class ItemDto {
     @NotNull(message = "Статус item должен быть указан", groups = {Creation.class})
     private Boolean available;
 
-    private Request request;
+    private Long request;
 }
 
