@@ -70,8 +70,8 @@ public class ItemRepository {
     }
 
     public List<Item> getAllItems() {
-        return items.values().stream().
-                flatMap(Collection::stream).
-                collect(Collectors.toList());
+        return items.values().stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 }

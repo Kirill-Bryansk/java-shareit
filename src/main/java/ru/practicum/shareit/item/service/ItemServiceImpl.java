@@ -54,9 +54,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getItemsForUser(Long userId) {
         List<Item> allItemsFromUser = itemRepository.getAllItemsFromUser(userId);
-        return allItemsFromUser.stream().
-                map(ItemMapper::toItemDto).
-                collect(Collectors.toList());
+        return allItemsFromUser.stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     @Override
