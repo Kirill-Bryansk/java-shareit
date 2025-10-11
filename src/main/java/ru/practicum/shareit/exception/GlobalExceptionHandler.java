@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.exception;
+package ru.practicum.shareit.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ class GlobalExceptionHandler {
         List<String> errorResponse = new ArrayList<>();
         errorResponse.add("Ошибка при выполнении запроса сервером: " + ex.getMessage());
 
-        log.error(errorResponse.get(0));
+        log.error(errorResponse.getFirst());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
@@ -52,6 +52,12 @@ class GlobalExceptionHandler {
     @ExceptionHandler(HttpClientErrorException.NotFound.class)
     public ResponseEntity<?> handlerHttpClientErrorException(HttpClientErrorException.NotFound ex) {
         String errorMessage = "Ошибка поступивших на сервер данных: " + ex.getMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> handleNotFoundException(NotFoundException ex) {
+        String errorMessage = "Ошибка: " + ex.getMessage();
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 }

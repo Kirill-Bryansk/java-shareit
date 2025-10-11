@@ -23,7 +23,7 @@ public class UserMapper {
                 .name(user.getName())
                 .email(user.getEmail())
                 .build();
-        log.info("Объект User успешно преобразован в UserDto");
+        log.debug("Объект User успешно преобразован в UserDto");
         return userDto;
     }
 
@@ -36,7 +36,7 @@ public class UserMapper {
         User user = new User(); // Создаем новый объект User
         try {
             BeanUtils.copyProperties(userDto, user); // Копируем свойства из объекта userDto в user
-            log.info("Объект UserDto успешно преобразован в User");
+            log.debug("Объект UserDto успешно преобразован в User");
         } catch (Exception e) {
             log.error("Ошибка преобразования объекта UserDto в User", e);
         }

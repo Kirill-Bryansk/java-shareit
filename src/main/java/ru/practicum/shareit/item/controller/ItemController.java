@@ -1,14 +1,17 @@
 package ru.practicum.shareit.item.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import java.util.List;
+
+import ru.practicum.shareit.validation.Creation;
+import ru.practicum.shareit.validation.Update;
 
 /**
  * TODO Sprint add-controllers.
@@ -24,14 +27,14 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<ItemDto> addItem(@RequestHeader(USER_HEADER)
-                                            Long userId, @Valid @RequestBody ItemDto itemDto) {
+                                               Long userId, @Validated(Creation.class) @RequestBody ItemDto itemDto) {
         log.info("POST: добавление предмета {}. Добавляет пользователь с id {{}}", itemDto.toString(), userId);
         return ResponseEntity.ok(itemService.addItem(userId, itemDto));
     }
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<ItemDto> updateItem(@RequestHeader(USER_HEADER) Long userId,
-                                              @RequestBody ItemDto itemDto,
+                                              @Validated(Update.class) @RequestBody ItemDto itemDto,
                                               @PathVariable Long itemId) {
         log.info("PATCH: обновление предмета {}. Id предмета {{}}. Пользователем с id {{}}.",
                 itemDto.toString(), itemId, userId);
@@ -45,16 +48,17 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemDto>> getItemsForUser(@RequestParam(USER_HEADER) Long userId) {
+    public ResponseEntity<List<ItemDto>> getItemsForUser(@RequestHeader(USER_HEADER) Long userId) {
         log.info("GET: запрос для получения списка вещей определенного пользователя по его id {{}}", userId);
         return ResponseEntity.ok(itemService.getItemsForUser(userId));
     }
 
+
     @GetMapping("/search")
     public ResponseEntity<List<ItemDto>> searchItems(@RequestHeader(USER_HEADER) Long userId,
-                                                     @RequestParam String query) {
+                                                     @RequestParam(name = "text") String text) {
         log.info("GET: запрос на поиск предмета");
-        return ResponseEntity.ok(itemService.searchItems(userId, query));
+        return ResponseEntity.ok(itemService.searchItems(userId, text));
     }
 
 }

@@ -1,31 +1,19 @@
 package ru.practicum.shareit.item.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.request.model.Request;
-import ru.practicum.shareit.user.model.User;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Item {
-    // Уникальный идентификатор вещи
-    private long id;
-
-    // Краткое название вещи
+    private Long id;
     private String name;
-
-    // Развёрнутое описание вещи
     private String description;
-
-    // Статус о том, доступна или нет вещь для аренды
-    private boolean availableForRent;
-
-    // Владелец вещи
-    private User owner;
-
-    // Если вещь была создана по запросу другого пользователя,
-    // то в этом поле будет храниться ссылка на соответствующий запрос
+    private Boolean available;
+    private Long owner;
     private Request request;
 }
 

@@ -19,14 +19,14 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
         User user = userMapper.fromDto(userDto);
         User savedUser = userRepository.save(user);
-        log.info("Пользователь: {} успешно создан.", savedUser.toString());
+        log.debug("Пользователь: {} успешно создан.", savedUser.toString());
         return userMapper.toDto(savedUser);
     }
 
     @Override
     public UserDto getUserById(Long id) {
         UserDto getUser = userMapper.toDto(userRepository.getUserById(id));
-        log.info("Пользователь: {} успешно получен.", getUser.toString());
+        log.debug("Пользователь: {} успешно получен.", getUser.toString());
         return getUser;
     }
 
@@ -34,13 +34,13 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto) {
         User user = userMapper.fromDto(userDto);
         User updateUser = userRepository.updateUser(user);
-        log.info("Пользователь успешно обновлен: {}", updateUser.toString());
+        log.debug("Пользователь успешно обновлен: {}", updateUser.toString());
         return userMapper.toDto(updateUser);
     }
 
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteUser(id);
-        log.info("Пользователь id: {} успешно удален: ", id);
+        log.debug("Пользователь id: {} успешно удален: ", id);
     }
 }

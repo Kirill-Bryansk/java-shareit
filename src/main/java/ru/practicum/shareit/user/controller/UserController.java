@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.validation.Creation;
+import ru.practicum.shareit.validation.Creation;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -26,14 +26,14 @@ public class  UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@Validated(Creation.class) @RequestBody UserDto userDto) {
-        log.info("Поступление запроса на создание пользователя: {}", userDto);
+        log.info("POST: запрос на создание пользователя: {}", userDto);
         UserDto createdUser = userService.createUser(userDto);
         return ResponseEntity.ok(createdUser);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
-        log.info("Поступление запроса на обновление пользователя: {}", userDto);
+        log.info("PATCH: запрос на обновление пользователя: {}", userDto);
         userDto.setId(id);
         UserDto updateUserDto = userService.updateUser(userDto);
         return ResponseEntity.ok(updateUserDto);
@@ -41,14 +41,14 @@ public class  UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
-        log.info("Поступление запроса на получение пользователя: {}", id);
+        log.info("GET: запрос на получение пользователя: {}", id);
         UserDto getUserDto = userService.getUserById(id);
         return ResponseEntity.ok(getUserDto);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
-        log.info("Поступление запроса на удаление пользователя: {}", id);
+        log.info("DELETE: запрос на удаление пользователя: {}", id);
         userService.deleteUser(id);
     }
 }

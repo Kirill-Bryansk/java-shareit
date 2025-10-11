@@ -8,6 +8,8 @@ import ru.practicum.shareit.item.model.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 
 @Component
 public class ItemMapper {
@@ -21,11 +23,11 @@ public class ItemMapper {
             itemDto.setId(item.getId());
             itemDto.setName(item.getName());
             itemDto.setDescription(item.getDescription());
-            itemDto.setAvailableForRent(item.isAvailableForRent());
+            itemDto.setAvailable(item.getAvailable());
             if (item.getRequest() != null) {
                 itemDto.setRequest(item.getRequest());
             }
-            log.info("Объект Item успешно преобразован в ItemDto");
+            log.debug("Объект Item успешно преобразован в ItemDto {}", itemDto);
         } catch (Exception e) {
             log.error("Ошибка преобразования объекта Item в ItemDto", e);
         }
@@ -33,15 +35,34 @@ public class ItemMapper {
         return itemDto;
     }
 
-    // ItemDto в Item
+    // из ItemDto в Item
     public static Item fromItemDto(ItemDto itemDto) {
         Item item = new Item();
         try {
             BeanUtils.copyProperties(itemDto, item); // Копируем свойства
-            log.info("Объект ItemDto успешно преобразован в Item");
+            log.debug("Объект ItemDto успешно преобразован в Item");
         } catch (Exception e) {
             log.error("Ошибка преобразования объекта ItemDto в Item", e);
         }
         return item;
+    }
+
+    public static void updateFields(Item itemUpdate, Item item) {
+        try {
+            if (Objects.isNull(itemUpdate.getAvailable())) {
+                itemUpdate.setAvailable(item.getAvailable());
+            }
+            if (Objects.isNull(itemUpdate.getDescription())) {
+                itemUpdate.setDescription(item.getDescription());
+            }
+            if (Objects.isNull(itemUpdate.getName())) {
+                itemUpdate.setName(item.getName());
+            }
+            itemUpdate.setId(item.getId());
+            itemUpdate.setRequest(item.getRequest());
+            itemUpdate.setOwner(item.getOwner());
+        } catch (Exception e) {
+            log.error("Ошибка при обновлении свойств Item", e);
+        }
     }
 }
