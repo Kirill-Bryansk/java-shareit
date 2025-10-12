@@ -15,7 +15,7 @@ import ru.practicum.shareit.validation.Creation;
 
 @RestController
 @RequestMapping(path = "/users")
-public class  UserController {
+public class UserController {
 
     private final UserService userService;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -25,25 +25,25 @@ public class  UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@Validated(Creation.class) @RequestBody UserDto userDto) {
+    public UserDto createUser(@Validated(Creation.class) @RequestBody UserDto userDto) {
         log.info("POST: запрос на создание пользователя: {}", userDto);
         UserDto createdUser = userService.createUser(userDto);
-        return ResponseEntity.ok(createdUser);
+        return createdUser;
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
+    public UserDto updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
         log.info("PATCH: запрос на обновление пользователя: {}", userDto);
         userDto.setId(id);
         UserDto updateUserDto = userService.updateUser(userDto);
-        return ResponseEntity.ok(updateUserDto);
+        return updateUserDto;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+    public UserDto getUser(@PathVariable Long id) {
         log.info("GET: запрос на получение пользователя: {}", id);
         UserDto getUserDto = userService.getUserById(id);
-        return ResponseEntity.ok(getUserDto);
+        return getUserDto;
     }
 
     @DeleteMapping("/{id}")
@@ -52,4 +52,5 @@ public class  UserController {
         userService.deleteUser(id);
     }
 }
+
 
