@@ -26,23 +26,20 @@ public class UserController {
     @PostMapping
     public UserDto createUser(@Validated(Creation.class) @RequestBody UserDto userDto) {
         log.info("POST: запрос на создание пользователя: {}", userDto);
-        UserDto createdUser = userService.createUser(userDto);
-        return createdUser;
+        return userService.createUser(userDto);
     }
 
     @PatchMapping("/{id}")
     public UserDto updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
         log.info("PATCH: запрос на обновление пользователя: {}", userDto);
         userDto.setId(id);
-        UserDto updateUserDto = userService.updateUser(userDto);
-        return updateUserDto;
+        return userService.updateUser(userDto);
     }
 
     @GetMapping("/{id}")
     public UserDto getUser(@PathVariable Long id) {
         log.info("GET: запрос на получение пользователя: {}", id);
-        UserDto getUserDto = userService.getUserById(id);
-        return getUserDto;
+        return userService.getUserById(id);
     }
 
     @DeleteMapping("/{id}")
