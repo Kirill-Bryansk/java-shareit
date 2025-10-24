@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.validation.annotation.Validated;
@@ -14,14 +15,10 @@ import ru.practicum.shareit.validation.Creation;
 
 @RestController
 @RequestMapping(path = "/users")
+@RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping
     public UserDto createUser(@Validated(Creation.class) @RequestBody UserDto userDto) {
