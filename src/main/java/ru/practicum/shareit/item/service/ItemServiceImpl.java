@@ -7,10 +7,12 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserRepository;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,16 +21,16 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final UserRepository userRepository;
+    private final UserServiceImpl userService;
     private final ItemRepository itemRepository;
     private final Logger log = LoggerFactory.getLogger(ItemServiceImpl.class);
 
     @Override
     public ItemDto addItem(Long userId, ItemDto itemDto) {
-        User user = userRepository.getUserById(userId);
+        UserDto user = userService.getUserById(userId);
         Item item = ItemMapper.fromItemDto(itemDto);
         item.setOwner(user.getId());
-        log.debug("Сохраненная вещь пользоватаеля СЕРВИС addItem {}", item);
+        log.debug("Сохраненная вещь пользователя СЕРВИС addItem {}", item);
         return ItemMapper.toItemDto(itemRepository.saveItem(item));
     }
 
@@ -36,7 +38,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto updateItem(Long userId, ItemDto itemDto, Long itemId) {
         log.debug("Параметры обновления  item : {}", itemDto);
 
-        User user = userRepository.getUserById(userId);
+        UserDto user = userService.getUserById(userId);
         Item item = itemRepository.findItemById(itemId);
         itemRepository.checkOwnerOfItem(user.getId(), itemId);
         Item itemUpdate = ItemMapper.fromItemDto(itemDto);
