@@ -23,10 +23,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto createUser(UserDto userDto) {
-        User user = userMapper.fromDto(userDto);
+        User user = UserMapper.fromDto(userDto);
         User savedUser = userRepository.save(user);
         log.debug("Пользователь: {} успешно создан.", savedUser);
-        return userMapper.toDto(savedUser);
+        return UserMapper.toDto(savedUser);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("Пользователь с id {" + id + "} не существует");
         } else {
             log.debug("Пользователь: {} успешно получен.", optionalUser);
-            return userMapper.toDto(optionalUser.get());
+            return UserMapper.toDto(optionalUser.get());
         }
     }
 
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto updateUser(Long userId, UserDto userDto) {
         log.debug("Начало обновления пользователя с ID: {}", userId);
-        User updateUser = userMapper.fromDto(getUserById(userId));
+        User updateUser = UserMapper.fromDto(getUserById(userId));
 
         if (userRepository.existsByEmail(userDto.getEmail())) {
             log.error("Email {} уже используется другим пользователем.", userDto.getEmail());
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
         userMapper.updateFields(updateUser, userDto);
         log.debug("Пользователь с ID: {} успешно обновлен.", userId);
-        return userMapper.toDto(updateUser);
+        return UserMapper.toDto(updateUser);
     }
 
     @Override

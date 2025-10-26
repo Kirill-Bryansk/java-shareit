@@ -1,18 +1,34 @@
 package ru.practicum.shareit.item.dao;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exception.NotFoundException;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
+import java.util.List;
 
-@Repository
-@RequiredArgsConstructor
-public class ItemRepository {
-    private final Map<Long, List<Item>> items = new HashMap<>();
+
+public interface ItemRepository extends JpaRepository<Item, Long> {
+
+    @Query("select i" +
+           " from Item as i" +
+           " where i.available = true and " +
+           "(lower(i.name) like lower(concat('%', ?1, '%') ) or" +
+           " lower(i.description) like lower(concat('%', ?1, '%') ))")
+    List<Item> search(String text);
+
+    List<Item> findAllByOwnerId(Long ownerId);
+
+    @Query("SELECT i FROM Item i WHERE i.id = :itemId AND i.owner.id = :ownerId")
+    void checkOwnerOfItem(@Param("itemId") Long itemId, @Param("ownerId") Long ownerId);
+
+
+
+
+
+
+
+    /*private final Map<Long, List<Item>> items = new HashMap<>();
     private final AtomicLong nextId = new AtomicLong(1L);
 
     public Item saveItem(Item item) {
@@ -73,5 +89,5 @@ public class ItemRepository {
         return items.values().stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-    }
+    }*/
 }

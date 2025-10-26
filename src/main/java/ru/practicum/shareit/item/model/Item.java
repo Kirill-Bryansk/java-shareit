@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 @Data
@@ -34,7 +35,7 @@ public class Item {
     @JoinColumn(name = "request_id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Long request;
+    private ItemRequest request;
 
     public Item(String name, String description, Boolean available) {
         this.name = name;

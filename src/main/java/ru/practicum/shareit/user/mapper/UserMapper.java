@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 public class UserMapper {
 
     // Метод преобразует объект User в объект UserDto.
-    public UserDto toDto(User user) {
+    public static UserDto toDto(User user) {
         if (user == null) {
             log.warn("Произошла попытка преобразования пустого объекта User");
             return null;
@@ -28,10 +28,10 @@ public class UserMapper {
     }
 
     // Метод преобразует объект UserDto в объект User.
-    public User fromDto(UserDto userDto) {
+    public static User fromDto(UserDto userDto) {
         if (userDto == null) {
             log.warn("Произошла попытка преобразования пустого объекта UserDto");
-            return null;
+            throw new IllegalArgumentException("UserDto не должен быть null");
         }
         User user = new User(); // Создаем новый объект User
         try {
@@ -39,9 +39,11 @@ public class UserMapper {
             log.debug("Объект UserDto успешно преобразован в User");
         } catch (Exception e) {
             log.error("Ошибка преобразования объекта UserDto в User", e);
+            throw e; // Перебрасываем исключение, чтобы вызывающая сторона могла его обработать
         }
         return user;
     }
+
 
     public void updateFields(User user, UserDto userDto) {
         log.debug("Начало обновления полей для пользователя с использованием UserDto. Имя: {}, Email: {}",

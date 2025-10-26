@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,14 +31,19 @@ class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<List<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        List<String> errorResponse = new ArrayList<>();
-        errorResponse.add("Ошибка при выполнении запроса сервером: " + ex.getMessage());
-
-        log.error(errorResponse.getFirst());
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    @ExceptionHandler({IllegalArgumentException.class, ForbiddenAccessException.class})
+    public ResponseEntity<?> handleExceptions(Exception ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        if (ex instanceof ForbiddenAccessException) {
+            errorResponse.put("message", "Ошибка при выполнении запроса сервером: " + ex.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        } else {
+            errorResponse.put("message", "Ошибка при выполнении запроса сервером: " + ex.getMessage());
+            log.error(errorResponse.get("message"));
+            return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+        }
     }
+
 
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -57,4 +64,13 @@ class GlobalExceptionHandler {
         String errorMessage = "Ошибка: " + ex.getMessage();
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<?> handleValidationException(ValidationException ex) {
+        String errorMessage = "Ошибка валидации: " + ex.getMessage();
+        log.error(errorMessage);
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+
 }
