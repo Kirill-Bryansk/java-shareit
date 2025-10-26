@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -112,21 +114,20 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public List<ItemDtoOut> getItemsForUser(Long userId) {
-        UserDto owner = userService.getUserById(userId);
+        log.debug("Получен запрос на получение списка вещей для пользователя с ID: {}", userId);
+
         List<Item> itemList = itemRepository.findAllByOwnerId(userId);
+        log.debug("Найдено {} вещей для пользователя", itemList.size());
+
         List<Long> idList = itemList.stream()
                 .map(Item::getId)
                 .collect(Collectors.toList());
-        Map<Long, List<CommentDtoOut>> comments = commentRepository.findAllByItemIdIn(idList)
-                .stream()
-                .map(CommentMapper::toCommentDtoOut)
-                .collect(groupingBy(CommentDtoOut::getItemId, toList()));
 
-        Map<Long, List<BookingDtoOut>> bookings = bookingRepository.findAllByItemInAndStatusOrderByStartAsc(itemList,
-                        BookingStatus.APPROVED)
-                .stream()
-                .map(BookingMapper::toBookingOut)
-                .collect(groupingBy(BookingDtoOut::getItemId, toList()));
+        Map<Long, List<CommentDtoOut>> comments = getCommentsForItems(idList);
+        log.debug("Получено {} комментариев для вещей", comments.size());
+
+        Map<Long, List<BookingDtoOut>> bookings = getBookingsForItems(itemList);
+        log.debug("Получено {} бронирований для вещей", bookings.size());
 
         return itemList
                 .stream()
@@ -137,6 +138,21 @@ public class ItemServiceImpl implements ItemService {
                         getNextBooking(bookings.get(item.getId()), LocalDateTime.now())
                 ))
                 .collect(toList());
+    }
+
+
+    private Map<Long, List<CommentDtoOut>> getCommentsForItems(List<Long> idList) {
+        return commentRepository.findAllByItemIdIn(idList)
+                .stream()
+                .map(CommentMapper::toCommentDtoOut)
+                .collect(groupingBy(CommentDtoOut::getItemId, toList()));
+    }
+
+    private Map<Long, List<BookingDtoOut>> getBookingsForItems(List<Item> itemList) {
+        return bookingRepository.findAllByItemInAndStatusOrderByStartAsc(itemList, BookingStatus.APPROVED)
+                .stream()
+                .map(BookingMapper::toBookingOut)
+                .collect(groupingBy(BookingDtoOut::getItemId, toList()));
     }
 
 
@@ -169,7 +185,8 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> userBookings = bookingRepository.findAllByUserBookings(userId, itemId, LocalDateTime.now());
 
         if (userBookings.isEmpty()) {
-            throw new ValidationException("У пользователя с id   " + userId + " должно быть хотя бы одно бронирование предмета с id " + itemId);
+            throw new ValidationException("У пользователя с id   " + userId + " должно быть хотя бы одно бронирование" +
+                                          " предмета с id " + itemId);
         }
 
         return CommentMapper.toCommentDtoOut(commentRepository.save(CommentMapper.toComment(commentDto, item, user)));

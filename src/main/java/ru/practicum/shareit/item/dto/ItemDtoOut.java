@@ -19,14 +19,12 @@ public class ItemDtoOut {
     private BookingDtoOut lastBooking;
     private List<CommentDtoOut> comments;
     private BookingDtoOut nextBooking;
-    // задел на следующий спринт private ItemRequestDtoOut request;
-
 
     public ItemDtoOut(Long id, String name, String description, Boolean available) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.available = available;
-        // задел на следующий спринт this.request = request;
+
     }
 }
