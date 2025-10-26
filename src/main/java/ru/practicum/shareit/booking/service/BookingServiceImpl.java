@@ -89,6 +89,7 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED -> bookingRepository.findAllRejectedBookingsByBookerId(bookerId, LocalDateTime.now()).stream()
                     .map(BookingMapper::toBookingOut)
                     .collect(Collectors.toList());
+            default -> throw new IllegalArgumentException("Unknown state: UNSUPPORTED_STATUS");
         };
     }
 
@@ -115,13 +116,14 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED -> bookingRepository.findAllRejectedBookingsByOwnerId(ownerId).stream()
                     .map(BookingMapper::toBookingOut)
                     .collect(Collectors.toList());
+            default -> throw new IllegalArgumentException("Unknown state: UNSUPPORTED_STATUS");
         };
     }
 
 
     private void bookingValidation(BookingDto bookingDto, User user, Item item) {
         if (!item.getAvailable()) {
-            throw new ValidationException("Вещь не доступна для бронирования.");
+            throw new ValidationException("Вещь не доступена для бронирования.");
         }
         if (user.getId().equals(item.getOwner().getId())) {
             throw new NotFoundException("Вещь не найдена.");
@@ -157,7 +159,7 @@ public class BookingServiceImpl implements BookingService {
             case 2:
                 if (!booking.getBooker().getId().equals(userId)
                         && !booking.getItem().getOwner().getId().equals(userId)) {
-                    throw new NotFoundException("Пользователь не владелец и не автор бронирования ");
+                    throw new NotFoundException("Пользователь не владелиц и не автор бронирования ");
                 }
                 return booking;
         }
