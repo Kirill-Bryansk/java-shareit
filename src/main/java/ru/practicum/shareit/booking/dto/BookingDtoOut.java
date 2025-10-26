@@ -25,7 +25,4 @@ public class BookingDtoOut {
         return item.getId();
     }
 
-    public long getBookerId() {
-        return booker.getId();
-    }
 }

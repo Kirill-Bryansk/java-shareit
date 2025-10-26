@@ -9,7 +9,9 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
-@Getter @Setter @ToString
+@Getter
+@ToString
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

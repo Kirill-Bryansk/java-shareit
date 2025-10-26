@@ -19,7 +19,7 @@ public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "description", nullable = false, length = 255)
+    @Column(name = "description", nullable = false)
     private String description;
 
     @ManyToOne
@@ -28,9 +28,4 @@ public class ItemRequest {
     private User requester;
 
     private LocalDateTime created;
-
-    public ItemRequest(Long id, String description) {
-        this.id = id;
-        this.description = description;
-    }
 }

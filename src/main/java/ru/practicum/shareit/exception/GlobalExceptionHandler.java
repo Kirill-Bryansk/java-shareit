@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +44,6 @@ class GlobalExceptionHandler {
     }
 
 
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         String errorMessage = "Ошибка при чтении тела запроса: " + ex.getMessage();
@@ -56,12 +54,14 @@ class GlobalExceptionHandler {
     @ExceptionHandler(HttpClientErrorException.NotFound.class)
     public ResponseEntity<?> handlerHttpClientErrorException(HttpClientErrorException.NotFound ex) {
         String errorMessage = "Ошибка поступивших на сервер данных: " + ex.getMessage();
+        log.error(errorMessage);
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handleNotFoundException(NotFoundException ex) {
         String errorMessage = "Ошибка: " + ex.getMessage();
+        log.error(errorMessage);
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 
@@ -71,6 +71,4 @@ class GlobalExceptionHandler {
         log.error(errorMessage);
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
-
-
 }
