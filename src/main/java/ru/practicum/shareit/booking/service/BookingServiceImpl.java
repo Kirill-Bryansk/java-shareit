@@ -123,7 +123,7 @@ public class BookingServiceImpl implements BookingService {
 
     private void bookingValidation(BookingDto bookingDto, User user, Item item) {
         if (!item.getAvailable()) {
-            throw new ValidationException("Вещь не доступена для бронирования.");
+            throw new ValidationException("Вещь не доступна для бронирования.");
         }
         if (user.getId().equals(item.getOwner().getId())) {
             throw new NotFoundException("Вещь не найдена.");
