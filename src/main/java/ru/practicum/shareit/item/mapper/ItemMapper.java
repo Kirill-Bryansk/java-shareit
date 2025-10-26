@@ -11,13 +11,6 @@ import java.util.List;
 
 @UtilityClass
 public class ItemMapper {
-    public ItemDto toItemDto(Item item) {
-        return new ItemDto(
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable());
-    }
-
     public ItemDtoOut toItemDtoOut(Item item) {
         return new ItemDtoOut(
                 item.getId(),
@@ -26,13 +19,13 @@ public class ItemMapper {
                 item.getAvailable());
     }
 
-    public ItemDtoOut toItemDtoOut(Item item, BookingDtoOut lastBooking, List<CommentDtoOut> comments, BookingDtoOut nextBooking) {
+    public ItemDtoOut toItemDtoOut(Item item, BookingDtoOut lastBooking, List<CommentDtoOut> comments,
+                                   BookingDtoOut nextBooking) {
         return new ItemDtoOut(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                // задел на следующий спринт ItemRequestMapper.toItemRequestDtoOut(item.getRequest()),
                 lastBooking,
                 comments,
                 nextBooking
@@ -45,5 +38,12 @@ public class ItemMapper {
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable());
+    }
+
+    public ItemDto toItemDto(Item item) {
+        return new ItemDto(
+                item.getName(),
+                item.getDescription(),
+                item.getAvailable());
     }
 }

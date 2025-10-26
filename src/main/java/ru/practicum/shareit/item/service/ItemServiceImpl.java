@@ -60,9 +60,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDtoOut updateItem(Long userId, ItemDto itemDto, Long itemId) {
         UserDto user = userService.getUserById(userId);
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> {
-                            return new NotFoundException("Вещи с " + itemId + " не существует");
-                        }
+                .orElseThrow(() -> new NotFoundException("Вещи с " + itemId + " не существует")
                 );
         if (!UserMapper.fromDto(user).equals(item.getOwner())) {
             throw new NotFoundException("Пользователь с id = " + userId +

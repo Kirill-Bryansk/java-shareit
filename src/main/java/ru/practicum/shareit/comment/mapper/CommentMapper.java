@@ -10,11 +10,6 @@ import ru.practicum.shareit.user.model.User;
 
 @UtilityClass
 public class CommentMapper {
-    public CommentDto toCommentDto(Comment comment) {
-        return new CommentDto(
-                comment.getText());
-    }
-
     public CommentDtoOut toCommentDtoOut(Comment comment) {
         return new CommentDtoOut(
                 comment.getId(),
