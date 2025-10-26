@@ -30,19 +30,20 @@ class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, ForbiddenAccessException.class})
-    public ResponseEntity<?> handleExceptions(Exception ex) {
+    @ExceptionHandler(ForbiddenAccessException.class)
+    public ResponseEntity<Map<String, String>> handleForbiddenAccess(ForbiddenAccessException ex) {
         Map<String, String> errorResponse = new HashMap<>();
-        if (ex instanceof ForbiddenAccessException) {
-            errorResponse.put("message", "Ошибка при выполнении запроса сервером: " + ex.getMessage());
-            return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
-        } else {
-            errorResponse.put("message", "Ошибка при выполнении запроса сервером: " + ex.getMessage());
-            log.error(errorResponse.get("message"));
-            return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
-        }
+        errorResponse.put("message", "Ошибка при выполнении запроса сервером: " + ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", "Ошибка при выполнении запроса сервером: " + ex.getMessage());
+        log.error(errorResponse.get("message"));
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {

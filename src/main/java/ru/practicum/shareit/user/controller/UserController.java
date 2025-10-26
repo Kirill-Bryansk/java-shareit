@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.service.UserServiceImpl;
+import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.validation.Creation;
 
 @Slf4j
@@ -15,7 +15,7 @@ import ru.practicum.shareit.validation.Creation;
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @PostMapping
     public UserDto createUser(@Validated(Creation.class) @RequestBody UserDto userDto) {

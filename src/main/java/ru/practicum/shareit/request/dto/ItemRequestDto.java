@@ -16,9 +16,4 @@ import java.time.LocalDateTime;
         private String description;
         private UserDto requester;
         private LocalDateTime created;
-
-        public ItemRequestDto(Long id, String description) {
-            this.id = id;
-            this.description = description;
-        }
 }

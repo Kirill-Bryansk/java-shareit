@@ -29,8 +29,7 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public BookingDtoOut updateStatus(@RequestHeader(USER_HEADER) Long userId,
-                                      @PathVariable("bookingId")
-                                      Long bookingId,
+                                      @PathVariable("bookingId") Long bookingId,
                                       @RequestParam(name = "approved") Boolean approved) {
         log.info("PATCH: запрос на обновление статуса бронирования вещи от владельца с id: {}", userId);
         return bookingService.update(userId, bookingId, approved);

@@ -51,6 +51,8 @@ public class BookingServiceImpl implements BookingService {
         log.debug("Найденный предмет: {}", item);
 
         bookingValidation(bookingDto, user, item);
+        validateNoTimeConflict(item, bookingDto); // Новая проверка на пересечение времени
+
         Booking booking = BookingMapper.toBooking(user, item, bookingDto);
 
         log.debug("Создана новая бронь: {}", booking);
@@ -62,8 +64,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDtoOut update(Long userId, Long bookingId, Boolean approved) {
-        Booking booking = validateBookingDetails(userId, bookingId, 1);
-        assert booking != null;
+        Booking booking = validateBookingDetailsForOwner(userId, bookingId);
         log.debug("Текущая бронь: {}", booking);
         log.debug("Новый статус: {}", approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
         BookingStatus newStatus = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
@@ -75,8 +76,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDtoOut findBookingByUserId(Long userId, Long bookingId) {
-        Booking booking = validateBookingDetails(userId, bookingId, 2);
-        assert booking != null;
+        Booking booking = validateBookingDetailsForRole(userId, bookingId);
         log.debug("Найденная бронь: {}", booking);
         return BookingMapper.toBookingOut(booking);
     }
@@ -166,7 +166,8 @@ public class BookingServiceImpl implements BookingService {
 
     private void validateUserIsNotOwner(User user, Item item) {
         if (user.getId().equals(item.getOwner().getId())) {
-            throw new NotFoundException("Вещь не найдена.");
+            throw new ForbiddenAccessException("Пользователь не может выполнить действие с вещью," +
+                                               " так как является её владельцем");
         }
     }
 
@@ -191,24 +192,24 @@ public class BookingServiceImpl implements BookingService {
         return state;
     }
 
-    private Booking validateBookingDetails(Long userId, Long bookingId, Integer number) {
+    private Booking validateBookingDetailsForOwner(Long userId, Long bookingId) {
         Optional<Booking> bookingById = bookingRepository.findById(bookingId);
         if (bookingById.isEmpty()) {
-            throw new NotFoundException("Бронь не найдена.");
+            throw new NotFoundException("Бронь с идентификатором " + bookingId + " не найдена.");
         }
         Booking booking = bookingById.get();
+        validateOwnerAndStatus(booking, userId);
+        return booking;
+    }
 
-        return switch (number) {
-            case 1 -> {
-                validateOwnerAndStatus(booking, userId);
-                yield booking;
-            }
-            case 2 -> {
-                validateUserRole(booking, userId);
-                yield booking;
-            }
-            default -> null;
-        };
+    private Booking validateBookingDetailsForRole(Long userId, Long bookingId) {
+        Optional<Booking> bookingById = bookingRepository.findById(bookingId);
+        if (bookingById.isEmpty()) {
+            throw new NotFoundException("Бронь с идентификатором " + bookingId + " не найдена.");
+        }
+        Booking booking = bookingById.get();
+        validateUserRole(booking, userId);
+        return booking;
     }
 
     private void validateOwnerAndStatus(Booking booking, Long userId) {
@@ -223,6 +224,18 @@ public class BookingServiceImpl implements BookingService {
     private void validateUserRole(Booking booking, Long userId) {
         if (!booking.getBooker().getId().equals(userId) && !booking.getItem().getOwner().getId().equals(userId)) {
             throw new NotFoundException("Пользователь не владелиц и не автор бронирования");
+        }
+    }
+
+    private void validateNoTimeConflict(Item item, BookingDto bookingDto) {
+        List<Booking> existingBookings = bookingRepository.findAll();
+        for (Booking existingBooking : existingBookings) {
+            if (existingBooking.getItem().getId().equals(item.getId())) {
+                if (bookingDto.getStart().isAfter(existingBooking.getStart())
+                    && bookingDto.getEnd().isBefore(existingBooking.getEnd())) {
+                    throw new ValidationException("Вещь уже забронирована на указанный период.");
+                }
+            }
         }
     }
 }
