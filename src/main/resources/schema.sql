@@ -50,3 +50,6 @@ CREATE TABLE IF NOT EXISTS comments
     CONSTRAINT fk_comments_item_id FOREIGN KEY (item_id) REFERENCES items (id),
     CONSTRAINT fk_comments_author_id FOREIGN KEY (author_id) REFERENCES users (id)
 );
+
+CREATE INDEX idx_bookings_start_date ON bookings (start_date);
+CREATE INDEX idx_bookings_end_date ON bookings (end_date);

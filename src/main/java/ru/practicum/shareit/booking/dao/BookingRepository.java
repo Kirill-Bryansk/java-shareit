@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
@@ -104,6 +105,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                    "AND b.status = 'APPROVED' " +
                    "AND b.end_date < ?3 ", nativeQuery = true)
     List<Booking> findAllByUserBookings(Long userId, Long itemId, LocalDateTime now);
+
+    @Query("SELECT COUNT(b) > 0 FROM Booking b " +
+           "WHERE b.item.id = :itemId " +
+           "AND NOT (b.start >= :end OR b.end <= :start)")
+    boolean existsByItemIdAndTimeConflict(@Param("itemId") Long itemId,
+                                          @Param("start") LocalDateTime start,
+                                          @Param("end") LocalDateTime end);
 
     List<Booking> findAllByItemInAndStatusOrderByStartAsc(List<Item> items, BookingStatus status);
 

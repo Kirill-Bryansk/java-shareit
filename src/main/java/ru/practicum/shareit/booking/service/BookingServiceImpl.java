@@ -203,11 +203,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private Booking validateBookingDetailsForRole(Long userId, Long bookingId) {
-        Optional<Booking> bookingById = bookingRepository.findById(bookingId);
-        if (bookingById.isEmpty()) {
-            throw new NotFoundException("Бронь с идентификатором " + bookingId + " не найдена.");
-        }
-        Booking booking = bookingById.get();
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Бронь с идентификатором " + bookingId + " не найдена."));
         validateUserRole(booking, userId);
         return booking;
     }
@@ -228,14 +225,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void validateNoTimeConflict(Item item, BookingDto bookingDto) {
-        List<Booking> existingBookings = bookingRepository.findAll();
-        for (Booking existingBooking : existingBookings) {
-            if (existingBooking.getItem().getId().equals(item.getId())) {
-                if (bookingDto.getStart().isAfter(existingBooking.getStart())
-                    && bookingDto.getEnd().isBefore(existingBooking.getEnd())) {
-                    throw new ValidationException("Вещь уже забронирована на указанный период.");
-                }
-            }
+        boolean hasConflict = bookingRepository.existsByItemIdAndTimeConflict(
+                item.getId(),
+                bookingDto.getStart(),
+                bookingDto.getEnd()
+        );
+
+        if (hasConflict) {
+            throw new ValidationException("Вещь уже забронирована на указанный период.");
         }
     }
 }
