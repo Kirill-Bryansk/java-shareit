@@ -1,32 +1,23 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Data;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import ru.practicum.shareit.validation.Creation;
-import ru.practicum.shareit.validation.Update;
+
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemDto {
-
-    private Long id;
-
-    @NotEmpty(message = "Имя item не может быть пустым", groups = {Creation.class})
-    @Size(max = 50, message = "Имя item должно содержать не более 50 символов", groups = {Creation.class, Update.class})
+    @NotBlank
     private String name;
-
-    @NotEmpty(message = "Описание item не может быть пустым", groups = {Creation.class})
-    @Size(max = 255, message = "Описание должно содержать не более 255 символов",
-            groups = {Creation.class, Update.class})
+    @NotBlank
     private String description;
-
-    // Статус о том, доступна или нет вещь для аренды
-    @NotNull(message = "Статус item должен быть указан", groups = {Creation.class})
+    @NotNull
     private Boolean available;
 
-    private Long request;
 }
-
