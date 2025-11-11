@@ -1,45 +1,42 @@
 package ru.practicum.shareit.user.controller;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import jakarta.validation.Valid;
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.UserDto;
-/*import ru.practicum.shareit.user.dto.UserDtoCreate;
-import ru.practicum.shareit.user.dto.UserDtoUpdate;*/
+import ru.practicum.shareit.user.dto.UserDtoRequestCreate;
+import ru.practicum.shareit.user.dto.UserDtoRequestUpdate;
+import ru.practicum.shareit.user.dto.UserDtoResponse;
 import ru.practicum.shareit.user.service.UserService;
 
-@Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/users")
-@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public UserDto createUser(@RequestBody UserDto userDto) {
-        log.info("POST: запрос на создание пользователя: {}", userDto);
-        return userService.createUser(userDto);
+    public UserDtoResponse create(@Valid @RequestBody UserDtoRequestCreate user) {
+        return userService.create(user);
     }
 
-   /* @PatchMapping("/{id}")
-    public UserDto updateUser(@PathVariable Long id, @Valid @RequestBody UserDtoUpdate updateUserDto) {
-        log.info("PATCH: запрос на обновление пользователя: {}", updateUserDto);
-        return userService.updateUser(id, updateUserDto);
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/{id}")
+    public UserDtoResponse update(@PathVariable Long id, @Valid @RequestBody UserDtoRequestUpdate user) {
+        return userService.update(id, user);
     }
 
-    @GetMapping("/{id}")
-    public UserDto getUser(@PathVariable Long id) {
-        log.info("GET: запрос на получение пользователя: {}", id);
-        return userService.getUserById(id);
-    }
-
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        log.info("DELETE: запрос на удаление пользователя: {}", id);
-        userService.deleteUser(id);
-    }*/
+    public void delete(@PathVariable Long id) {
+        userService.delete(id);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}")
+    public UserDtoResponse get(@PathVariable Long id) {
+        return userService.get(id);
+    }
+
 }
-
-

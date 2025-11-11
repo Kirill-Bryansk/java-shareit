@@ -1,16 +1,44 @@
 package ru.practicum.shareit.user.service;
 
-import ru.practicum.shareit.user.dto.UserDto;
-/*import ru.practicum.shareit.user.dto.UserDtoCreate;
-import ru.practicum.shareit.user.dto.UserDtoUpdate;*/
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ExceptionUserNotFound;
+import ru.practicum.shareit.user.dto.UserDtoRequestCreate;
+import ru.practicum.shareit.user.dto.UserDtoRequestUpdate;
+import ru.practicum.shareit.user.dto.UserDtoResponse;
+import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
-public interface UserService {
-    UserDto createUser(UserDto userDtoCreate);
+@Service
+@RequiredArgsConstructor
+public class UserService {
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    UserDto getUserById(Long id);
+    public UserDtoResponse create(UserDtoRequestCreate user) {
+        return userMapper.toUserDtoResponse(userRepository.save(userMapper.toUserDtoRequestCreate(user)));
+    }
 
-    /*UserDto updateUser(Long id, UserDtoUpdate updateUserDto);
+    public UserDtoResponse update(Long id, UserDtoRequestUpdate userNew) {
+        User userOld = getUser(id);
+        userMapper.userDtoRequestUpdate(userNew, userOld);
+        userRepository.save(userOld);
+        return userMapper.toUserDtoResponse(userOld);
+    }
 
-    void deleteUser(Long id);*/
+    public void delete(Long id) {
+        getUser(id);
+        userRepository.deleteById(id);
+    }
+
+    public UserDtoResponse get(Long id) {
+        return userMapper.toUserDtoResponse(getUser(id));
+    }
+
+    public User getUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ExceptionUserNotFound("Пользователь с идентификатором (" + id + ") не найден."));
+    }
+
 }
-
