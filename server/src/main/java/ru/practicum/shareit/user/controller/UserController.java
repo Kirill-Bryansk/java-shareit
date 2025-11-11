@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.dto.UserDtoRequestCreate;
 import ru.practicum.shareit.user.dto.UserDtoRequestUpdate;
 import ru.practicum.shareit.user.dto.UserDtoResponse;
 import ru.practicum.shareit.user.service.UserService;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -43,6 +44,4 @@ public class UserController {
         log.info("GET: запрос на получение пользователя с ID: {}", id);
         return userService.get(id);
     }
-
-
 }
