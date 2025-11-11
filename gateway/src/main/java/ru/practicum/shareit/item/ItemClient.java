@@ -17,7 +17,7 @@ import ru.practicum.shareit.item.dto.ItemDtoRequestUpdate;
 @Service
 public class ItemClient extends BaseClient {
     @Autowired
-    public ItemClient(@Value("http://shareit-server:9090") String serverUrl, RestTemplateBuilder builder) {
+    public ItemClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + "/items"))

@@ -16,7 +16,7 @@ import java.util.Map;
 @Service
 public class BookingClient extends BaseClient {
     @Autowired
-    public BookingClient(@Value("http://shareit-server:9090") String serverUrl, RestTemplateBuilder builder) {
+    public BookingClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + "/bookings"))
